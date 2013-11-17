@@ -1,0 +1,10 @@
+--- linux/include/linux/in6.h	2012-01-05 00:55:44.000000000 +0100
++++ cycon/include/linux/in6.h	2013-11-17 17:14:50.260018312 +0100
+@@ -145,6 +145,7 @@
+ #define IPV6_TLV_PAD0		0
+ #define IPV6_TLV_PADN		1
+ #define IPV6_TLV_ROUTERALERT	5
++#define IPV6_TLV_CONF		129     // custom hbh-option confidentiality
+ #define IPV6_TLV_JUMBO		194
+ #define IPV6_TLV_HAO		201	/* home address option */
+ 

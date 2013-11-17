@@ -1,0 +1,57 @@
+--- linux/net/ipv6/exthdrs.c	2012-01-05 00:55:44.000000000 +0100
++++ cycon/net/ipv6/exthdrs.c	2013-11-17 17:15:50.130024288 +0100
+@@ -114,6 +114,7 @@
+ 
+ static int ip6_tlvopt_unknown(struct sk_buff *skb, int optoff)
+ {
++	printk(KERN_ERR "unknown hop-by-hop option\n");
+ 	switch ((skb_network_header(skb)[optoff] & 0xC0) >> 6) {
+ 	case 0: /* ignore */
+ 		return 1;
+@@ -166,6 +167,7 @@
+ 			if (optlen > len)
+ 				goto bad;
+ 			for (curr=procs; curr->type >= 0; curr++) {
++			
+ 				if (curr->type == nh[off]) {
+ 					/* type specific length/alignment
+ 					   checks will be performed in the
+@@ -622,6 +624,26 @@
+ 	kfree_skb(skb);
+ 	return 0;
+ }
++// custom hbh confidentiality option parsing
++
++static int ipv6_hop_conf(struct sk_buff *skb, int optoff)
++{
++	const unsigned char *nh = skb_network_header(skb);
++
++	if (nh[optoff + 1] == 1) {
++		IP6CB(skb)->conf= optoff;
++		printk("got packet with confidentiality option\n");
++		if(nh[optoff+2] <= IPV6_CONFIDANTIALITY )
++			return 1;
++		else
++			return 0;
++	}
++	LIMIT_NETDEBUG(KERN_DEBUG "ipv6_hop_conf: wrong confidentiality length %d\n",
++		       nh[optoff + 1]);
++
++	kfree_skb(skb);
++	return 0;
++}
+ 
+ static struct tlvtype_proc tlvprochopopt_lst[] = {
+ 	{
+@@ -632,6 +654,11 @@
+ 		.type	= IPV6_TLV_JUMBO,
+ 		.func	= ipv6_hop_jumbo,
+ 	},
++//	custom hbh-opt
++	{
++		.type   = IPV6_TLV_CONF,
++		.func   = ipv6_hop_conf,
++	},
+ 	{ -1, }
+ };
+ 

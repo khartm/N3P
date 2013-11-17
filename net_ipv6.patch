@@ -1,0 +1,13 @@
+--- linux/include/net/ipv6.h	2012-01-05 00:55:44.000000000 +0100
++++ cycon/include/net/ipv6.h	2013-11-17 17:15:05.080026689 +0100
+@@ -48,6 +48,10 @@
+ #define IPV6_DEFAULT_HOPLIMIT   64
+ #define IPV6_DEFAULT_MCASTHOPS	1
+ 
++// custom Confidantiality -- for correct implementation needs to be passed externally in a secure way
++
++#define IPV6_CONFIDANTIALITY    5
++
+ /*
+  *	Addr type
+  *	
